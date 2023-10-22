@@ -1,47 +1,71 @@
 #!/usr/bin/python3
-
+""" This is my problem :'v """
 import sys
+import re
+import signal
+from collections import OrderedDict
 
 
-def print_message(status_code_counts, total_file_size):
-    """
-    Method to print
-    Args:
-        status_code_counts: Dictionary of status codes
-        total_file_size: Total size of the file
-    Returns:
-        Nothing
-    """
+def search_items(line, s):
+    """ Search the items to positionate """
+    regexu = r"\s\d{3}\s\d{1,}"
+    txt = re.search(regexu, line)
+    word = txt.group()
+    word = word[1:]
 
-    print("File size: {}".format(total_file_size))
-    for code, count in sorted(status_code_counts.items()):
-        if count != 0:
-            print("{}: {}".format(code, count))
+    regexd = r"\d{3}\s"
+    left = re.search(regexd, word)
+
+    code = left.group()
+    code = code[:-1]
+
+    regext = r"\s\d{1,}"
+    right = re.search(regext, word)
+
+    size = right.group()
+    size = size[1:]
+    size = int(size)
+
+    add_code(code, s)
+
+    return size
 
 
-status_code_counts = {'200': 0, '301': 0, '400': 0, '401': 0,
-                      '403': 0, '404': 0, '405': 0, '500': 0}
-total_file_size = 0
-counter = 0
+def add_code(code, codes):
+    """ Count the status code """
+    try:
+        codes[code] += 1
+    except KeyError:
+        pass
 
-try:
-    for line in sys.stdin:
-        parsed_line = line.split()  # Split the line
-        parsed_line = parsed_line[::-1]  # Reverse the order of elements
 
-        if len(parsed_line) > 2:
-            counter += 1
+def print_all(stat):
+    """ Print all """
+    stat = OrderedDict(stat)
 
-            if counter <= 10:
-                total_file_size += int(parsed_line[0])  # Extract file size
-                status_code = parsed_line[1]  # Extract status code
+    for key, value in stat.items():
+        if value is not 0:
+            print("{}: {}".format(key, value))
 
-                if status_code in status_code_counts:
-                    status_code_counts[status_code] += 1
 
-            if counter == 10:
-                print_message(status_code_counts, total_file_size)
-                counter = 0
+if __name__ == "__main__":
+    status = {"200": 0, "301": 0, "400": 0, "401": 0,
+              "403": 0, "404": 0, "405": 0, "500": 0}
+    file_size = 0
+    i = 0
 
-finally:
-    print_message(status_code_counts, total_file_size)
+    try:
+        for lines in sys.stdin:
+            file_size += search_items(lines, status)
+
+            if i is not 0 and i % 9 == 0:
+                print("File size: {:d}".format(file_size))
+                print_all(status)
+
+            i += 1
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print("File size: {:d}".format(file_size))
+        print_all(status)
+        sys.exit(0)
