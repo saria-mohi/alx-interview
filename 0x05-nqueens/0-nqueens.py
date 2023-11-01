@@ -36,9 +36,8 @@ def solve(n):
         for s in solution:
             k.append([i, s])
             i += 1
-        print(k)
-        k = []
-        i = 0
+        i = 0  # Reset i for the next solution
+    print(k)  # Print all solutions after the loop
 
 
 solve(n)
