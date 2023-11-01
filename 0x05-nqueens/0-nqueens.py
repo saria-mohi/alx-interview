@@ -74,3 +74,4 @@ if __name__ == "__main__":
     solutions = solve_n_queens(N)
     for sol in solutions:
         print(sol)
+
