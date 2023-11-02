@@ -29,7 +29,7 @@ def queens(n, i=0, a=[], b=[], c=[]):
 
 
 def solve(n):
-    """ solve """
+    """ solve method """
     k = []
     i = 0
     for solution in queens(n, 0):
