@@ -3,7 +3,7 @@
 
 const req = require('request');
 
-req.get('https://swapi-api.hbtn.io/api/films/' + process.argv[2], function (error, res, body) {
+req.get('https://swapi-api.alx-tools.com/api/films/' + process.argv[2], function (error, res, body) {
   if (error) {
     console.log(error);
   }
