@@ -1,49 +1,28 @@
 #!/usr/bin/python3
-"""Module for Prime Game"""
+"""Prime game module.
+"""
 
 
 def isWinner(x, nums):
+    """Determines the winner of a prime game session with `x` rounds.
     """
-    Prime Game
-    """
-    # Check for invalid input
-    if x <= 0 or nums is None:
+    if x < 1 or not nums:
         return None
-    if x != len(nums):
+    marias_wins, bens_wins = 0, 0
+    # generate primes with a limit of the maximum number in nums
+    n = max(nums)
+    primes = [True for _ in range(1, n + 1, 1)]
+    primes[0] = False
+    for i, is_prime in enumerate(primes, 1):
+        if i == 1 or not is_prime:
+            continue
+        for j in range(i + i, n + 1, i):
+            primes[j - 1] = False
+    # filter the number of primes less than n in nums for each round
+    for _, n in zip(range(x), nums):
+        primes_count = len(list(filter(lambda x: x, primes[0: n])))
+        bens_wins += primes_count % 2 == 0
+        marias_wins += primes_count % 2 == 1
+    if marias_wins == bens_wins:
         return None
-    # Initialize scores and array of possible prime numbers
-    ben = 0
-    maria = 0
-    # Create a list 'a' of length sorted(nums)[-1] + 1 with all elements
-    # initialized to 1
-    a = [1 for x in range(sorted(nums)[-1] + 1)]
-    # The first two elements of the list, a[0] and a[1], are set to 0
-    # because 0 and 1 are not prime numbers
-    a[0], a[1] = 0, 0
-    # Use Sieve of Eratosthenes algorithm to generate array of prime numbers
-    for i in range(2, len(a)):
-        rm_multiples(a, i)
-    # Play each round of the game
-    for i in nums:
-        # If the sum of prime numbers in the set is even, Ben wins
-        if sum(a[0:i + 1]) % 2 == 0:
-            ben += 1
-        else:
-            maria += 1
-    # Determine the winner of the game
-    if ben > maria:
-        return "Ben"
-    if maria > ben:
-        return "Maria"
-    return None
-
-
-def rm_multiples(ls, x):
-    """
-    Removes all multiples of a number from a list.
-    """
-    for i in range(2, len(ls)):
-        try:
-            ls[i * x] = 0
-        except (ValueError, IndexError):
-            break
+    return 'Maria' if marias_wins > bens_wins else 'Ben'
